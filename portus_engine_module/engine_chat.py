@@ -1,7 +1,7 @@
 from portus_core_module.config_manager import (
     TEMPERATURE,
     TOP_P,
-    MAX_TOKENS,
+    MAX_OUTPUT_TOKENS,
     BASE_URL,
     STREAM,
 )
@@ -46,6 +46,7 @@ def chat_with_model(client, messages, tools=None, tool_choice="auto"):
         "top_p": TOP_P,
         "tools": tools,
         "tool_choice": tool_choice,
+        "max_output_tokens": MAX_OUTPUT_TOKENS
     }
   
     kwargs = {k: v for k, v in kwargs.items() if v is not None}

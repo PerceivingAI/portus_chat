@@ -39,6 +39,7 @@
       "stream": true,
       "tools": [],
       "tool_choice": "auto",
+      "max_output_tokens": 10240,
       "store": false
     },
 

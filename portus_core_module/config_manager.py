@@ -64,6 +64,7 @@ TOP_P = PARAMETERS.get("top_p")
 STREAM = PARAMETERS.get("stream")
 TOOLS = PARAMETERS.get("tools")
 TOOL_CHOICE = PARAMETERS.get("tool_choice")
+MAX_OUTPUT_TOKENS = PARAMETERS.get("max_output_tokens")
 STORE = PARAMETERS.get("store")
 
 # --- values for local context / models -----------------------------
