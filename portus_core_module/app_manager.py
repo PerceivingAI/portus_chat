@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from portus_interface_module.cli.cli_manager import cli_modes
 
-load_dotenv()
+load_dotenv(override=True) 
 
 def show_menu():
     mode_names = list(cli_modes.keys())

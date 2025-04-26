@@ -1,9 +1,6 @@
-# portus_engine_module/engine_chat.py
-
 from portus_core_module.config_manager import (
     TEMPERATURE,
     TOP_P,
-    TOP_K,
     MAX_TOKENS,
     BASE_URL,
     STREAM,
@@ -15,42 +12,42 @@ from portus_context_module.context_adapters import (
     to_gemini_native_format,
 )
 
+# Global context
 context = ContextManager()
 USING_OPENAI_STYLE = "openai" in BASE_URL.lower()
 
-def _extract_content(response_obj):
-    """
-    Return assistant text whether the provider is OpenAI-style or
-    native Gemini.
-    """
+def _extract_content(resp):
     try:
-        return response_obj.choices[0].message.content
+        text = resp.output_text
+        return text
     except AttributeError:
-        pass
+        print("[engine_chat] ⚠️ output_text missing, trying raw content…")
+    try:
+        first = resp.content[0]
+        text = first.get("text")
+        return text
+    except Exception as e:
+        print("[engine_chat] ❌ Failed to get text from resp.content:", e)
+    raise RuntimeError("Cannot extract assistant content from response")
 
-    try:
-        return response_obj.candidates[0].content.parts[0].text
-    except AttributeError:
-        raise RuntimeError("Cannot extract assistant content from response")
 
 def chat_with_model(client, messages, tools=None, tool_choice="auto"):
+
     for msg in messages:
         context.add_turn(msg["role"], msg["content"])
 
-    formatted_history = (
-        to_openai_format(context.get_history())
-        if USING_OPENAI_STYLE
-        else to_gemini_native_format(context.get_history())
-    )
+    if USING_OPENAI_STYLE:
+        formatted = to_openai_format(context.get_history())
+    else:
+        formatted = to_gemini_native_format(context.get_history())
 
     kwargs = {
         "temperature": TEMPERATURE,
         "top_p": TOP_P,
-        "max_tokens": MAX_TOKENS,
-        "top_k": TOP_K,
         "tools": tools,
         "tool_choice": tool_choice,
     }
+  
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
     if STREAM:
@@ -59,11 +56,14 @@ def chat_with_model(client, messages, tools=None, tool_choice="auto"):
         def token_generator():
             nonlocal assistant_reply
             try:
-                response = client.chat(messages=formatted_history, **kwargs)
+                response = client.chat(messages=formatted, **kwargs)
                 for chunk in response:
-                    delta = chunk.choices[0].delta
-                    if hasattr(delta, "content") and delta.content:
-                        token = delta.content
+                    if hasattr(chunk, "choices"):
+                        delta = chunk.choices[0].delta
+                        token = getattr(delta, "content", "")
+                    else:
+                        token = str(chunk)
+                    if token:
                         assistant_reply += token
                         yield token
             finally:
@@ -72,7 +72,7 @@ def chat_with_model(client, messages, tools=None, tool_choice="auto"):
 
         return token_generator()
 
-    response = client.chat(messages=formatted_history, **kwargs)
+    response = client.chat(messages=formatted, **kwargs)
     assistant_reply = _extract_content(response)
     context.add_turn("assistant", assistant_reply)
     return assistant_reply

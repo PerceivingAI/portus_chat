@@ -18,8 +18,8 @@ def get_client():
         )
 
     elif PROVIDER_NAME == "openai":
-        from .api_openai import OpenAIClient
-        return OpenAIClient(
+        from .api_openai import OpenAIResponsesClient
+        return OpenAIResponsesClient(
             api_key=api_key,
             model=MODEL,
             base_url=BASE_URL,

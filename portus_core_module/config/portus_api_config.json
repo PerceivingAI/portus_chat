@@ -5,7 +5,7 @@
     "default_mode": "api",
 
     "api": {
-      "default_provider": "gemini",
+      "default_provider": "openai",
 
       "openai": {
         "model": "gpt-4.1-nano-2025-04-14",
@@ -33,19 +33,18 @@
   "parameters": {
     "system_prompt": "You are a helpful assistant.",
 
-    "global": {
+    "openai": {
       "temperature": 0.7,
-      "top_p": 1,
-      "n_ctx": 10240,
-      "max_tokens": 10240,
+      "top_p": 1.0,
       "stream": true,
       "tools": [],
       "tool_choice": "auto",
-      "response_format": "text",
-      "stop": null
+      "store": false
     },
 
-    "openai": {
+    "additional": {
+      "n_ctx": 10240,
+      "max_tokens": 10240,
       "top_k": 40,
       "presence_penalty": 0.2,
       "frequency_penalty": 0.2

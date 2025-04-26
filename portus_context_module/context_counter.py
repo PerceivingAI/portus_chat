@@ -1,6 +1,6 @@
 # portus_context_module/context_counter.py
 
-from portus_core_module.config_manager import N_CTX
+from portus_core_module.config_manager import ADD_PARAMETERS
 from tiktoken import get_encoding
 from portus_context_module.context_trimmer_summarizer import (
     trim_context,
@@ -14,6 +14,7 @@ TRIM_RATIO = 0.33
 
 ENCODING = get_encoding("cl100k_base")
 
+N_CTX = ADD_PARAMETERS.get("n_ctx")
 
 def count_tokens(text):
     if not text:

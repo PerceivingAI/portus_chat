@@ -38,7 +38,6 @@ class GeminiClient:
         )
 
     def close(self):
-        """Close the internal httpx.Client to free sockets."""
         self._http.close()
 
     def __enter__(self):
