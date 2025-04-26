@@ -1,3 +1,5 @@
+# api_module/api_openai.py
+
 from openai import OpenAI
 import httpx
 
@@ -25,7 +27,6 @@ class OpenAIResponsesClient:
                 continue
 
             if event.type == "response.output_text.delta":
-                # delta is already the text fragment
                 yield event.delta
                 continue
 
@@ -34,11 +35,6 @@ class OpenAIResponsesClient:
 
             if event.type == "error":
                 raise RuntimeError(f"Streaming error: {event.error}")
-
-        # ignore all other semantic events
-
-
-
 
     def close(self):
         self._http.close()

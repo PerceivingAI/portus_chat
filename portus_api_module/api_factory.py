@@ -2,6 +2,8 @@
 
 import os
 from portus_core_module.config_manager import PROVIDER_NAME, MODEL, BASE_URL, STREAM
+from .api_openai import OpenAIResponsesClient
+from .api_gemini import GeminiClient
 
 def get_client():
     api_key = os.getenv(f"{PROVIDER_NAME.upper()}_API_KEY")
@@ -9,7 +11,6 @@ def get_client():
         raise ValueError(f"API key for provider '{PROVIDER_NAME}' not found in environment variables.")
 
     if PROVIDER_NAME == "gemini":
-        from .api_gemini import GeminiClient
         return GeminiClient(
             api_key=api_key,
             model=MODEL,
@@ -18,7 +19,6 @@ def get_client():
         )
 
     elif PROVIDER_NAME == "openai":
-        from .api_openai import OpenAIResponsesClient
         return OpenAIResponsesClient(
             api_key=api_key,
             model=MODEL,

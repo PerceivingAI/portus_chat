@@ -1,43 +1,59 @@
-# portus_api_module/api_gemini.py
-
 from openai import OpenAI
 import httpx
 
-
 class GeminiClient:
     """
-    Thin wrapper that lets us call Gemini through the OpenAI-python SDK.
-
-    Adds `close()` and context-manager support so the underlying httpx
-    connection pool is released when we’re done.
+    Uses the OpenAI SDK pointed at Gemini’s REST endpoint.
+    Supports streaming and non-streaming chat completions.
     """
 
     def __init__(self, api_key: str, model: str, base_url: str, stream: bool = False):
-        self.api_key = api_key
-        self.model = model
-        self.base_url = base_url
+        self.model  = model
         self.stream = stream
-        self._http = httpx.Client()
+        self._http  = httpx.Client()
         self.client = OpenAI(
-            api_key=self.api_key,
-            base_url=self.base_url,
+            api_key=api_key,
+            base_url=base_url,
             http_client=self._http,
         )
 
-    def chat(self, messages, tools=None, tool_choice="auto", **kwargs):
+    def chat(self, messages, **kwargs):
         """
-        Forward to `openai-python` chat endpoint.
+        messages: List[{"role":..., "content":...}]
+        kwargs: temperature, top_p, tools, tool_choice, max_output_tokens, etc.
         """
-        return self.client.chat.completions.create(
+        # Remove parameters not accepted by the Gemini endpoint
+        kwargs.pop("max_output_tokens", None)
+
+        if not self.stream:
+            # single-shot completion
+            resp = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                **kwargs,
+            )
+            # return stub with only content
+            class _Stub: pass
+            stub = _Stub()
+            stub.choices = resp.choices  # keep full object if needed
+            return stub
+
+        # streaming branch
+        stream = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            stream=self.stream,
-            tools=tools,
-            tool_choice=tool_choice,
+            stream=True,
             **kwargs,
         )
+        for chunk in stream:
+            # OpenAI-style delta streaming
+            delta = chunk.choices[0].delta
+            text = getattr(delta, "content", "")
+            if text:
+                yield text
 
     def close(self):
+        """Close the underlying HTTP pool."""
         self._http.close()
 
     def __enter__(self):

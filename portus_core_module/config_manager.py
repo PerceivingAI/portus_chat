@@ -6,7 +6,7 @@ class ConfigError(RuntimeError):
     pass
 
 def load_config() -> Dict[str, Any]:
-    cfg = Path(__file__).resolve().parent / "config" / "portus_api_config.json"
+    cfg = Path(__file__).resolve().parent / "config" / "portus_chat_config.json"
     try:
         with cfg.open("r", encoding="utf-8") as fp:
             return json.load(fp)
