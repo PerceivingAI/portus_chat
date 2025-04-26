@@ -1,0 +1,54 @@
+{
+  "config_id": "insight_config",
+
+  "mode": {
+    "default_mode": "api",
+
+    "api": {
+      "default_provider": "gemini",
+
+      "openai": {
+        "model": "gpt-4.1-nano-2025-04-14",
+        "base_url": "https://api.openai.com/v1"
+      },
+
+      "grok": {
+        "model": "grok-3-mini",
+        "base_url": ""
+      },
+
+      "gemini": {
+        "model": "gemini-2.0-flash",
+        "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/"
+      }
+    },
+
+    "local": {
+      "portus": {
+        "model": null
+      }
+    }
+  },
+
+  "parameters": {
+    "system_prompt": "You are a helpful assistant.",
+
+    "global": {
+      "temperature": 0.7,
+      "top_p": 1,
+      "n_ctx": 10240,
+      "max_tokens": 10240,
+      "stream": true,
+      "tools": [],
+      "tool_choice": "auto",
+      "response_format": "text",
+      "stop": null
+    },
+
+    "openai": {
+      "top_k": 40,
+      "presence_penalty": 0.2,
+      "frequency_penalty": 0.2
+    }
+  }
+}
