@@ -1,3 +1,5 @@
+# portus_core_module/config_manager.py
+
 import json
 from pathlib import Path
 from typing import Any, Dict
@@ -6,12 +8,12 @@ class ConfigError(RuntimeError):
     pass
 
 def load_config() -> Dict[str, Any]:
-    cfg = Path(__file__).resolve().parent / "config" / "portus_chat_config.json"
+    cfg_path = Path(__file__).resolve().parents[2] / "portus_chat_config.json"
     try:
-        with cfg.open("r", encoding="utf-8") as fp:
+        with cfg_path.open("r", encoding="utf-8") as fp:
             return json.load(fp)
     except FileNotFoundError as exc:
-        raise ConfigError(f"Configuration file not found: {cfg}") from exc
+        raise ConfigError(f"Configuration file not found: {cfg_path}") from exc
 
 CONFIG = load_config()
 
@@ -49,6 +51,9 @@ def get_openai_params() -> Dict[str, Any]:
 def get_additional_params() -> Dict[str, Any]:
     return CONFIG["parameters"].get("additional", {})
 
+def get_grok_params() -> Dict[str, Any]:
+    return CONFIG["parameters"].get("grok", {})
+
 PROVIDER_MODE = get_provider_mode()
 PROVIDER_NAME = get_provider_name()
 MODEL = get_model()
@@ -57,6 +62,7 @@ BASE_URL = get_model_url("base_url")
 SYSTEM_PROMPT = get_system_prompt()
 PARAMETERS = get_openai_params()      
 ADD_PARAMETERS = get_additional_params()
+GROK_PARAMS = get_grok_params()
 
 # --- values for cloud call -----------------------------------------
 TEMPERATURE = PARAMETERS.get("temperature")

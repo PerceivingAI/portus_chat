@@ -5,6 +5,7 @@ import sys
 from dotenv import load_dotenv
 
 from portus_interface_module.cli.cli_manager import cli_modes
+from portus_core_module.default_manager import reset_defaults
 
 load_dotenv(override=True) 
 
@@ -35,11 +36,17 @@ def show_menu():
 
 def launch_portus():
     parser = argparse.ArgumentParser(description="Portus Modular Entry Point")
-
+    parser.add_argument("--reset", action="store_true",
+                        help="Reset the config file to default values and exit")
     for name in cli_modes:
         parser.add_argument(f"--{name.lower()}", action="store_true", help=f"Launch {name} mode")
 
     args = parser.parse_args()
+
+    if args.reset:
+        # overwrite the config and quit
+        reset_defaults()
+        return
 
     for name, func in cli_modes.items():
         if getattr(args, name.lower()):

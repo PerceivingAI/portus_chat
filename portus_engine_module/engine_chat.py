@@ -1,9 +1,12 @@
+# portus_engine_module/engine_chat.py
+
 from portus_core_module.config_manager import (
     TEMPERATURE,
     TOP_P,
     MAX_OUTPUT_TOKENS,
     BASE_URL,
     STREAM,
+    PROVIDER_NAME
 )
 
 from portus_context_module.context_manager import ContextManager
@@ -14,7 +17,7 @@ from portus_context_module.context_adapters import (
 
 # Global context
 context = ContextManager()
-USING_OPENAI_STYLE = "openai" in BASE_URL.lower()
+USING_OPENAI_STYLE = ("openai" in BASE_URL.lower()) or (PROVIDER_NAME == "grok")
 
 def _extract_content(resp):
     try:

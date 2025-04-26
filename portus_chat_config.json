@@ -1,38 +1,30 @@
 {
-  "config_id": "insight_config",
-
+  "config_id": "portus_chat_config",
   "mode": {
     "default_mode": "api",
-
     "api": {
       "default_provider": "gemini",
-
       "openai": {
         "model": "gpt-4.1-nano-2025-04-14",
         "base_url": "https://api.openai.com/v1"
       },
-
-      "grok": {
-        "model": "grok-3-mini",
-        "base_url": ""
-      },
-
       "gemini": {
         "model": "gemini-2.0-flash",
         "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/"
+      },
+      "grok": {
+        "model": "grok-3-mini",
+        "base_url": "https://api.x.ai/v1"
       }
     },
-
     "local": {
       "portus": {
         "model": null
       }
     }
   },
-
   "parameters": {
     "system_prompt": "You are a helpful assistant.",
-
     "openai": {
       "temperature": 0.7,
       "top_p": 1.0,
@@ -42,7 +34,9 @@
       "max_output_tokens": 10240,
       "store": false
     },
-
+    "grok": {
+      "reasoning_effort": "low"
+    },
     "additional": {
       "n_ctx": 10240,
       "max_tokens": 10240,

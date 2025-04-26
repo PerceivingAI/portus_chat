@@ -1,4 +1,4 @@
-# api_module/api_openai.py
+# portus_api_module/api_openai.py
 
 from openai import OpenAI
 import httpx
