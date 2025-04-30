@@ -95,7 +95,7 @@ def get_storage_path() -> Path:
 
     if not candidate or not candidate.is_dir():
         default = Path.home() / "Downloads"
-        print(f"⚠️ storage_path not set or invalid—using {default}")
+        print(f"💡 No valid storage_path set — using default location: {default}")
         default.mkdir(parents=True, exist_ok=True)
         return default
 

@@ -1,22 +1,9 @@
 # portus_engine_module/engine_chat.py
 
-from portus_config_module.config_manager import (
-    TEMPERATURE,
-    TOP_P,
-    MAX_OUTPUT_TOKENS,
-    BASE_URL,
-    STREAM,
-    PROVIDER_NAME
-)
+from portus_config_module.config_manager import TEMPERATURE, TOP_P, MAX_OUTPUT_TOKENS, BASE_URL, STREAM, PROVIDER_NAME
+from portus_context_module.context_manager import context
+from portus_context_module.context_adapters import to_openai_format, to_gemini_native_format
 
-from portus_context_module.context_manager import ContextManager
-from portus_context_module.context_adapters import (
-    to_openai_format,
-    to_gemini_native_format,
-)
-
-# Global context
-context = ContextManager()
 USING_OPENAI_STYLE = ("openai" in BASE_URL.lower()) or (PROVIDER_NAME == "grok")
 
 def _extract_content(resp):

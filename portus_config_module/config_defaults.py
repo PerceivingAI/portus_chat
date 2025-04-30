@@ -16,7 +16,7 @@ DEFAULT_CONFIG_CONTENT = textwrap.dedent("""\
     "default_mode": "api",
 
     "api": {
-      "default_provider": "openai",
+      "default_provider": "gemini",
 
       "openai": {
         "model": "gpt-4.1-nano-2025-04-14",

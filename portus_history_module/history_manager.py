@@ -3,38 +3,45 @@
 from typing import List, Dict
 from portus_storage_module.storage_manager import list_conversations, load_conversation, delete_conversation
 
-def display_index(limit: int = 10) -> List[Dict]:
-    entries = list_conversations(limit)
+def get_index_entries() -> List[Dict]:
+    return list_conversations()
+
+def format_index(entries: List[Dict]) -> None:
     if not entries:
         print("No saved conversations.")
-        return []
-
+        return
     for i, ent in enumerate(entries, start=1):
-        ts = ent["last_access"]
-        title = ent["title"]
-        print(f"{i}) [{ts}] “{title}”")
-    return entries
+        print(f"{i}) [{ent['last_access']}] “{ent['title']}”")
 
-def display_conversation_by_index(n: int, limit: int = 10):
-    entries = list_conversations(limit)
-    if not entries:
-        print("No saved conversations.")
-        return
+def remove_by_index(n: int) -> None:
+    entries = get_index_entries()
+    if 1 <= n <= len(entries):
+        delete_conversation(entries[n-1]["id"])
+        print(f"[HistoryManager] Deleted conversation {n}.")
+    else:
+        print("⚠️ Invalid index for deletion.")
 
-    if n < 1 or n > len(entries):
-        print(f"Invalid selection: {n}")
-        return
+def get_conversation_turns(n: int) -> (List[Dict], str):
+    entries = get_index_entries()
+    if not (1 <= n <= len(entries)):
+        raise IndexError("Selection out of range")
+    ent = entries[n-1]
+    turns = load_conversation(ent["id"])
+    return turns, ent["last_access"]
 
-    conv_id = entries[n-1]["id"]
-    turns = load_conversation(conv_id)
-    print(f"\n--- Conversation {n} (ID: {conv_id}) ---")
+def format_conversation(turns: List[Dict]) -> None:
     for turn in turns:
-        role = turn["role"]
-        content = turn["content"]
-        print(f"{role.capitalize()}: {content}")
-    print("--- End of conversation ---\n")
+        print(f"{turn['role'].capitalize()}: {turn['content']}")
 
-def remove_by_index(n: int, limit: int = 10):
-    entries = list_conversations(limit)
-    conv_id = entries[n-1]["id"]
-    delete_conversation(conv_id)
+def build_resume_payload(
+    turns: List[Dict], last_access: str, new_message: str
+) -> str:
+    formatted_history = "\n".join(
+        f"{t['role'].capitalize()}: {t['content']}" for t in turns
+    )
+    return (
+        f"{formatted_history}\n"
+        f"Last accessed: {last_access}\n\n"
+        "Use the previous conversation history to continue the conversation, here is the next user message:\n"
+        f"{new_message}"
+    )

@@ -2,10 +2,7 @@
 
 from portus_config_module.config_manager import ADD_PARAMETERS
 from tiktoken import get_encoding
-from portus_context_module.context_trimmer_summarizer import (
-    trim_context,
-    summarize_context
-)
+from portus_context_module.context_trimmer_summarizer import trim_context, summarize_context
 
 # --- Thresholds ---
 CONTEXT_THRESHOLD = 0.85
