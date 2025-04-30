@@ -79,7 +79,7 @@ scratch/
 
 1_debrief.py
 1_session_log.txt
-#Notes.txt
+Notes.txt
 
 # Filetypes
 *.gguf
