@@ -1,45 +1,57 @@
 {
   "config_id": "portus_chat_config",
+
   "mode": {
     "default_mode": "api",
+
     "api": {
       "default_provider": "gemini",
+
       "openai": {
         "model": "gpt-4.1-nano-2025-04-14",
         "base_url": "https://api.openai.com/v1"
       },
+
       "gemini": {
         "model": "gemini-2.0-flash",
         "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/"
       },
+
       "grok": {
         "model": "grok-3-mini",
         "base_url": "https://api.x.ai/v1"
       }
     },
+
     "local": {
-      "portus": {
-        "model": null
-      }
+      "portus": { "model": null }
     }
   },
-  "parameters": {
+
+  "storage_parameters": {
+    "storage_path": ""
+  },
+
+  "model_parameters": {
     "system_prompt": "You are a helpful assistant.",
+
     "openai": {
       "temperature": 0.7,
       "top_p": 1.0,
       "stream": true,
       "tools": [],
       "tool_choice": "auto",
-      "max_output_tokens": 10240,
+      "max_output_tokens": 20480,
       "store": false
     },
+
     "grok": {
       "reasoning_effort": "low"
     },
+
     "additional": {
-      "n_ctx": 10240,
-      "max_tokens": 10240,
+      "n_ctx": 512000,
+      "max_tokens": 20480,
       "top_k": 40,
       "presence_penalty": 0.2,
       "frequency_penalty": 0.2

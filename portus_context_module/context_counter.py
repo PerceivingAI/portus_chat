@@ -1,6 +1,6 @@
 # portus_context_module/context_counter.py
 
-from portus_core_module.config_manager import ADD_PARAMETERS
+from portus_config_module.config_manager import ADD_PARAMETERS
 from tiktoken import get_encoding
 from portus_context_module.context_trimmer_summarizer import (
     trim_context,

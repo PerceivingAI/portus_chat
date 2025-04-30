@@ -1,6 +1,6 @@
 # portus_engine_module/engine_chat.py
 
-from portus_core_module.config_manager import (
+from portus_config_module.config_manager import (
     TEMPERATURE,
     TOP_P,
     MAX_OUTPUT_TOKENS,

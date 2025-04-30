@@ -1,7 +1,7 @@
 # portus_api_module/api_factory.py
 
 import os
-from portus_core_module.config_manager import PROVIDER_NAME, MODEL, BASE_URL, STREAM
+from portus_config_module.config_manager import PROVIDER_NAME, MODEL, BASE_URL, STREAM
 from .api_openai import OpenAIResponsesClient
 from .api_gemini import GeminiClient
 from .api_grok import GrokClient

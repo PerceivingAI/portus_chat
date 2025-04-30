@@ -1,19 +1,23 @@
-# portus_core_module/config_manager.py
+# portus_config_module/config_manager.py
 
-import json
+import sys, json, os
 from pathlib import Path
 from typing import Any, Dict
+from portus_config_module.config_utils import candidate_dirs
 
 class ConfigError(RuntimeError):
     pass
 
 def load_config() -> Dict[str, Any]:
-    cfg_path = Path(__file__).resolve().parents[2] / "portus_chat_config.json"
-    try:
-        with cfg_path.open("r", encoding="utf-8") as fp:
-            return json.load(fp)
-    except FileNotFoundError as exc:
-        raise ConfigError(f"Configuration file not found: {cfg_path}") from exc
+    for base in candidate_dirs():
+        cfg_path = base / "portus_chat_config.json"
+        if cfg_path.is_file():
+            return json.loads(cfg_path.read_text(encoding="utf-8"))
+
+    raise ConfigError(
+        "Configuration file 'portus_chat_config.json' not found.\n"
+        + "\n".join(f"  • {d}" for d in candidate_dirs())
+    )
 
 CONFIG = load_config()
 
@@ -43,16 +47,16 @@ def get_model_url(feature: str = "base_url") -> str:
     return _expect(url, f"mode.{src}.{prov}.{feature}")
 
 def get_system_prompt():
-    return CONFIG["parameters"].get("system_prompt")
+    return CONFIG["model_parameters"].get("system_prompt")
 
 def get_openai_params() -> Dict[str, Any]:
-    return CONFIG["parameters"].get("openai", {})
+    return CONFIG["model_parameters"].get("openai", {})
 
 def get_additional_params() -> Dict[str, Any]:
-    return CONFIG["parameters"].get("additional", {})
+    return CONFIG["model_parameters"].get("additional", {})
 
 def get_grok_params() -> Dict[str, Any]:
-    return CONFIG["parameters"].get("grok", {})
+    return CONFIG["model_parameters"].get("grok", {})
 
 PROVIDER_MODE = get_provider_mode()
 PROVIDER_NAME = get_provider_name()
@@ -79,3 +83,22 @@ MAX_TOKENS = ADD_PARAMETERS.get("max_tokens")
 TOP_K = ADD_PARAMETERS.get("top_k")
 PRESENCE_PENALTY = ADD_PARAMETERS.get("presence_penalty")
 FREQUENCY_PENALTY = ADD_PARAMETERS.get("frequency_penalty")
+
+# --- storage parameters --------------------------------------------
+def get_storage_path() -> Path:
+    cfg = CONFIG.get("storage_parameters", {})
+    raw = cfg.get("storage_path", "") or ""
+    try:
+        candidate = Path(raw).expanduser().resolve() if raw else None
+    except Exception:
+        candidate = None
+
+    if not candidate or not candidate.is_dir():
+        default = Path.home() / "Downloads"
+        print(f"⚠️ storage_path not set or invalid—using {default}")
+        default.mkdir(parents=True, exist_ok=True)
+        return default
+
+    return candidate
+
+STORAGE_PATH = get_storage_path()

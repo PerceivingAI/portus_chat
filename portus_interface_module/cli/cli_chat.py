@@ -2,20 +2,21 @@
 
 import os
 import sys
-from dotenv import load_dotenv
-
 from portus_engine_module.engine_chat import chat_with_model
-from portus_core_module.config_manager import STREAM
+from portus_config_module.config_manager import STREAM
 from portus_api_module.api_factory import get_client
 from portus_interface_module.cli.cli_utils import handle_special_commands
+from portus_context_module.context_manager import context, set_storage_enabled
+from portus_storage_module.storage_manager import set_current_conversation_id
 
 MENU_NAME = "Contextual Chat"
 MENU_ORDER = 1
 
-load_dotenv()
-
-
 def run_chat_mode():
+    set_current_conversation_id(None)
+    set_storage_enabled(True)
+    context.reset()
+
     client = get_client()
     print("💬 Chat mode activated. Type /exit to quit or /menu to return.\n")
 
@@ -27,7 +28,7 @@ def run_chat_mode():
             continue
 
         if not handle_special_commands(prompt):
-            return          # go back to main menu
+            return
 
         messages = [{"role": "user", "content": prompt}]
         response = chat_with_model(client, messages)

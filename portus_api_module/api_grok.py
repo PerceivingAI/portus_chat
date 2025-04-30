@@ -2,7 +2,7 @@
 
 from openai import OpenAI
 import httpx
-from portus_core_module.config_manager import GROK_PARAMS
+from portus_config_module.config_manager import GROK_PARAMS
 
 class GrokClient:
     """
